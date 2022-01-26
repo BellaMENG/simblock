@@ -19,8 +19,12 @@ package simblock.task;
 import static simblock.simulator.Timer.getCurrentTime;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import simblock.block.SamplePoSBlock;
 import simblock.node.Node;
+import simblock.transaction.Transaction;
 
 public class SampleStakingTask extends AbstractMintingTask {
   private final BigInteger difficulty;
@@ -32,8 +36,9 @@ public class SampleStakingTask extends AbstractMintingTask {
 
   @Override
   public void run() {
+	List<Transaction> transactions = new ArrayList<Transaction>();
     SamplePoSBlock createdBlock = new SamplePoSBlock(
-        (SamplePoSBlock) this.getParent(), this.getMinter(), getCurrentTime(),
+        (SamplePoSBlock) this.getParent(), this.getMinter(), getCurrentTime(), transactions,
         this.difficulty
     );
     this.getMinter().receiveBlock(createdBlock);

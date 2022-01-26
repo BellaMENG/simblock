@@ -21,6 +21,10 @@ import static simblock.simulator.Timer.getCurrentTime;
 import java.math.BigInteger;
 import simblock.block.ProofOfWorkBlock;
 import simblock.node.Node;
+import simblock.transaction.Transaction;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * The type Mining task.
@@ -43,8 +47,11 @@ public class MiningTask extends AbstractMintingTask {
 
   @Override
   public void run() {
+	// TODO: first, make all the transactions empty;
+	// TODO: implement transactions mempool and grab transactions from mempool;
+	List<Transaction> transactions = new ArrayList<Transaction>();
     ProofOfWorkBlock createdBlock = new ProofOfWorkBlock(
-        (ProofOfWorkBlock) this.getParent(), this.getMinter(), getCurrentTime(),
+        (ProofOfWorkBlock) this.getParent(), this.getMinter(), getCurrentTime(), transactions,
         this.difficulty
     );
     this.getMinter().receiveBlock(createdBlock);

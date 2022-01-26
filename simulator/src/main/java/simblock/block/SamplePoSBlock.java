@@ -26,7 +26,10 @@ import static simblock.simulator.Simulator.getTargetInterval;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+
 import simblock.node.Node;
+import simblock.transaction.Transaction;
 
 /**
  * The type Sample proof of stake block.
@@ -47,9 +50,9 @@ public class SamplePoSBlock extends Block {
    * @param difficulty the difficulty
    */
   public SamplePoSBlock(
-      SamplePoSBlock parent, Node minter, long time, BigInteger difficulty
+      SamplePoSBlock parent, Node minter, long time, List<Transaction> transactions, BigInteger difficulty
   ) {
-    super(parent, minter, time);
+    super(parent, minter, time, transactions);
 
     this.coinages = new HashMap<>();
     if (parent == null) {
@@ -136,6 +139,6 @@ public class SamplePoSBlock extends Block {
     for (Node node : getSimulatedNodes()) {
       genesisCoinages.put(node, genCoinage());
     }
-    return new SamplePoSBlock(null, minter, 0, BigInteger.ZERO);
+    return new SamplePoSBlock(null, minter, 0, null, BigInteger.ZERO);
   }
 }
