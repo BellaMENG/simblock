@@ -22,7 +22,6 @@ public class Mempool {
 	
 	public void put(Transaction tx) {
 		transactionPool.add(tx);
-		// push a transaction to the queue
 	}
 	
 	public int size() {
