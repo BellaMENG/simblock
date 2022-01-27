@@ -12,9 +12,11 @@ public class EtherBlock extends Block {
 	private int gasUsed;
 	
 	
-	public EtherBlock(Block parent, Node minter, long time, ArrayList<Transaction> transactions) {
+	public EtherBlock(Block parent, Node minter, long time, ArrayList<Transaction> transactions, int gasLimit, int gasUsed) {
 		super(parent, minter, time, transactions);
 		// TODO Auto-generated constructor stub
+		this.gasLimit = gasLimit;
+		this.gasUsed = gasUsed;
 	}
 
 

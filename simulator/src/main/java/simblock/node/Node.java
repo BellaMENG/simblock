@@ -72,7 +72,8 @@ public class Node {
   /**
    * The consensus algorithm used by the node.
    */
-  private AbstractConsensusAlgo consensusAlgo;
+  // TODO: changed consensusAlgo's visibility to protected
+  protected AbstractConsensusAlgo consensusAlgo;
 
   /**
    * Whether the node uses compact block relay.
