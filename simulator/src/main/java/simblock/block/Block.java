@@ -17,11 +17,6 @@
 package simblock.block;
 
 import simblock.node.Node;
-import simblock.transaction.Transaction;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
 
 /**
  * The representation of a block.
@@ -57,7 +52,7 @@ public class Block {
    */
   private static int latestId = 0;
   
-  private List<Transaction> transactions;
+  //private List<Transaction> transactions;
   /**
    * Instantiates a new Block.
    *
@@ -65,18 +60,12 @@ public class Block {
    * @param minter the minter
    * @param time   the time
    */
-  public Block(Block parent, Node minter, long time, List<Transaction> transactions) {
+  public Block(Block parent, Node minter, long time) {
     this.height = parent == null ? 0 : parent.getHeight() + 1;
     this.parent = parent;
     this.minter = minter;
     this.time = time;
-    this.transactions = new ArrayList<Transaction>();
-    if (transactions == null) {
-    	this.transactions = null;
-    }
-    else {
-    	Collections.copy(this.transactions, transactions);
-    }
+    
     this.id = latestId;
     latestId++;
   }
@@ -137,7 +126,7 @@ public class Block {
    */
   @SuppressWarnings("unused")
   public static Block genesisBlock(Node minter) {
-    return new Block(null, minter, 0, null);
+    return new Block(null, minter, 0);
   }
 
   /**

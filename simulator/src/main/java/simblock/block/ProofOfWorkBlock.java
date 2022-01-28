@@ -20,6 +20,8 @@ import static simblock.simulator.Simulator.getSimulatedNodes;
 import static simblock.simulator.Simulator.getTargetInterval;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import simblock.node.Node;
 import simblock.transaction.Transaction;
@@ -34,6 +36,7 @@ public class ProofOfWorkBlock extends Block {
   private final BigInteger nextDifficulty;
   private static BigInteger genesisNextDifficulty;
 
+  private List<Transaction> transactions;
   /**
    * Instantiates a new Proof of work block.
    *
@@ -43,9 +46,17 @@ public class ProofOfWorkBlock extends Block {
    * @param difficulty the difficulty
    */
   public ProofOfWorkBlock(ProofOfWorkBlock parent, Node minter, long time, List<Transaction> transactions, BigInteger difficulty) {
-    super(parent, minter, time, transactions);
+    super(parent, minter, time);
     this.difficulty = difficulty;
-
+    
+    this.transactions = new ArrayList<Transaction>();
+    if (transactions == null) {
+    	this.transactions = null;
+    }
+    else {
+    	Collections.copy(this.transactions, transactions);
+    }
+    
     if (parent == null) {
       this.totalDifficulty = BigInteger.ZERO.add(difficulty);
       this.nextDifficulty = ProofOfWorkBlock.genesisNextDifficulty;
