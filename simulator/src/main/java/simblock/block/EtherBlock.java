@@ -6,7 +6,6 @@ import java.util.List;
 
 import simblock.node.Node;
 import simblock.transaction.EtherTransaction;
-import simblock.transaction.Transaction;
 
 public class EtherBlock extends Block {
 	
@@ -27,7 +26,6 @@ public class EtherBlock extends Block {
 	    	Collections.copy(this.transactions, transactions);
 	    }
 	}
-
 
 	public int getGasLimit() {
 		return gasLimit;

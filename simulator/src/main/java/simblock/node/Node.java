@@ -44,6 +44,7 @@ import simblock.task.CmpctBlockMessageTask;
 import simblock.task.GetBlockTxnMessageTask;
 import simblock.task.InvMessageTask;
 import simblock.task.RecMessageTask;
+import simblock.task.BuildTransactionTask;
 
 /**
  * A class representing a node in the network.
@@ -339,10 +340,12 @@ public class Node {
    * Generates a new minting task and registers it
    */
   public void minting() {
-    AbstractMintingTask task = this.consensusAlgo.minting();
-    this.mintingTask = task;
-    if (task != null) {
-      putTask(task);
+    AbstractMintingTask mintingTask = this.consensusAlgo.minting();
+    BuildTransactionTask buildTransactionTask = new BuildTransactionTask(1, 10);
+    this.mintingTask = mintingTask;
+    if (mintingTask != null) {
+      putTask(mintingTask);
+      putTask(buildTransactionTask);
     }
   }
 
