@@ -28,17 +28,19 @@ import simblock.transaction.Transaction;
 
 public class SampleStakingTask extends AbstractMintingTask {
   private final BigInteger difficulty;
+  private final int numberOfTx;
 
-  public SampleStakingTask(Node minter, long interval, BigInteger difficulty) {
-    super(minter, interval);
+  public SampleStakingTask(Node minter, long interval, BigInteger difficulty, int numberOfTx) {
+    super(minter, interval, numberOfTx);
     this.difficulty = difficulty;
+    this.numberOfTx = numberOfTx;
   }
 
   @Override
   public void run() {
 	List<Transaction> transactions = new ArrayList<Transaction>();
     SamplePoSBlock createdBlock = new SamplePoSBlock(
-        (SamplePoSBlock) this.getParent(), this.getMinter(), getCurrentTime(), transactions,
+        (SamplePoSBlock) this.getParent(), this.getMinter(), getCurrentTime(), this.numberOfTx, transactions,
         this.difficulty
     );
     this.getMinter().receiveBlock(createdBlock);

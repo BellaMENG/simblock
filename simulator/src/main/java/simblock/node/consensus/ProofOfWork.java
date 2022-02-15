@@ -36,7 +36,7 @@ public class ProofOfWork extends AbstractConsensusAlgo {
    */
   public ProofOfWork(Node selfNode) {
     super(selfNode);
-  }
+  } 
 
   /**
    * Mints a new block by simulating Proof of Work.
@@ -46,10 +46,11 @@ public class ProofOfWork extends AbstractConsensusAlgo {
     Node selfNode = this.getSelfNode();
     ProofOfWorkBlock parent = (ProofOfWorkBlock) selfNode.getBlock();
     BigInteger difficulty = parent.getNextDifficulty();
+    int numberOfTx = parent.getNumberOfTx();
     double p = 1.0 / difficulty.doubleValue();
     double u = random.nextDouble();
     return p <= Math.pow(2, -53) ? null : new MiningTask(selfNode, (long) (Math.log(u) / Math.log(
-        1.0 - p) / selfNode.getMiningPower()), difficulty);
+        1.0 - p) / selfNode.getMiningPower()), difficulty, numberOfTx);
   }
 
   /**

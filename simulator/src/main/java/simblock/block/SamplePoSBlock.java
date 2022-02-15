@@ -53,8 +53,8 @@ public class SamplePoSBlock extends Block {
 	 * @param time       the time
 	 * @param difficulty the difficulty
 	 */
-	public SamplePoSBlock(SamplePoSBlock parent, Node minter, long time, List<Transaction> transactions, BigInteger difficulty) {
-		super(parent, minter, time);
+	public SamplePoSBlock(SamplePoSBlock parent, Node minter, long time, int numberOfTx, List<Transaction> transactions, BigInteger difficulty) {
+		super(parent, minter, time, numberOfTx);
 
 		this.coinages = new HashMap<>();
 		if (parent == null) {
@@ -148,6 +148,6 @@ public class SamplePoSBlock extends Block {
 		for (Node node : getSimulatedNodes()) {
 			genesisCoinages.put(node, genCoinage());
 		}
-		return new SamplePoSBlock(null, minter, 0, null, BigInteger.ZERO);
+		return new SamplePoSBlock(null, minter, 0, 0, null, BigInteger.ZERO);
 	}
 }

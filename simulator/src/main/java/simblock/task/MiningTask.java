@@ -31,6 +31,7 @@ import java.util.ArrayList;
  */
 public class MiningTask extends AbstractMintingTask {
   private final BigInteger difficulty;
+  private final int numberOfTx;
 
   /**
    * Instantiates a new Mining task.
@@ -40,9 +41,10 @@ public class MiningTask extends AbstractMintingTask {
    * @param difficulty the difficulty
    */
   //TODO how is the difficulty expressed and used here?
-  public MiningTask(Node minter, long interval, BigInteger difficulty) {
-    super(minter, interval);
+  public MiningTask(Node minter, long interval, BigInteger difficulty, int numberOfTx) {
+    super(minter, interval, numberOfTx);
     this.difficulty = difficulty;
+    this.numberOfTx = numberOfTx;
   }
 
   @Override
@@ -50,8 +52,9 @@ public class MiningTask extends AbstractMintingTask {
 	// TODO: first, make all the transactions empty;
 	// TODO: implement transactions mempool and grab transactions from mempool;
 	List<Transaction> transactions = new ArrayList<Transaction>();
+	
     ProofOfWorkBlock createdBlock = new ProofOfWorkBlock(
-        (ProofOfWorkBlock) this.getParent(), this.getMinter(), getCurrentTime(), transactions,
+        (ProofOfWorkBlock) this.getParent(), this.getMinter(), getCurrentTime(), this.numberOfTx, transactions,
         this.difficulty
     );
     this.getMinter().receiveBlock(createdBlock);

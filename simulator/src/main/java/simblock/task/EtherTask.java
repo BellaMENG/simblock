@@ -15,19 +15,21 @@ public class EtherTask extends AbstractMintingTask{
 	
 	private int gasLimit;
 	private int gasUsed;
+	private final int numberOfTx;
 
-	public EtherTask(Node minter, long interval, int gasLimit, int gasUsed) {
-		super(minter, interval);
+	public EtherTask(Node minter, long interval, int gasLimit, int gasUsed, int numberOfTx) {
+		super(minter, interval, numberOfTx);
 		// TODO Auto-generated constructor stub
 		this.gasLimit = gasLimit;
 		this.gasUsed = gasUsed;
+		this.numberOfTx = numberOfTx;
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		List<EtherTransaction> transactions = new ArrayList<EtherTransaction>();
-		EtherBlock createdBlock = new EtherBlock((EtherBlock) this.getParent(), this.getMinter(), getCurrentTime(), transactions,
+		EtherBlock createdBlock = new EtherBlock((EtherBlock) this.getParent(), this.getMinter(), getCurrentTime(), this.numberOfTx, transactions,
 				this.gasLimit, this.gasUsed);
 		this.getMinter().receiveBlock(createdBlock);
 	}

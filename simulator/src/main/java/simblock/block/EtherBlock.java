@@ -13,8 +13,8 @@ public class EtherBlock extends Block {
 	private int gasUsed;
 	private List<EtherTransaction> transactions;
 	
-	public EtherBlock(EtherBlock parent, Node minter, long time, List<EtherTransaction> transactions, int gasLimit, int gasUsed) {
-		super(parent, minter, time);
+	public EtherBlock(EtherBlock parent, Node minter, long time, int numberOfTx, List<EtherTransaction> transactions, int gasLimit, int gasUsed) {
+		super(parent, minter, time, numberOfTx);
 		// TODO Auto-generated constructor stub
 		this.gasLimit = gasLimit;
 		this.gasUsed = gasUsed;

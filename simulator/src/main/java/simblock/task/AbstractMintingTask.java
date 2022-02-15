@@ -36,6 +36,9 @@ public abstract class AbstractMintingTask implements Task {
    * Block interval in milliseconds.
    */
   private final long interval;
+  
+  // TODO: is it correct to add a field here for number of transactions to be added to new block?
+  private final int numberOfTx;
 
   /**
    * Instantiates a new Abstract minting task.
@@ -43,10 +46,11 @@ public abstract class AbstractMintingTask implements Task {
    * @param minter   the minter
    * @param interval the interval in milliseconds
    */
-  public AbstractMintingTask(Node minter, long interval) {
+  public AbstractMintingTask(Node minter, long interval, int numberOfTx) {
     this.parent = minter.getBlock();
     this.minter = minter;
     this.interval = interval;
+    this.numberOfTx = numberOfTx;
   }
 
   /**
