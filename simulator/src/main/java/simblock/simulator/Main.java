@@ -152,7 +152,8 @@ public class Main {
     }
 
     // Print propagation information about all blocks
-    printAllPropagation();
+    // TODO: print propagation
+    //printAllPropagation();
 
     //TODO logger
     System.out.println();
