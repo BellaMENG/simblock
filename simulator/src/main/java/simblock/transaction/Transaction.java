@@ -1,14 +1,14 @@
 package simblock.transaction;
 
 public class Transaction {
-	private int id;
+	private static int id = 0;
 	private int transactionFee;
 	private int value;
 	
-	public Transaction(int id, int transactionFee, int value) {
-		this.id = id;
+	public Transaction(int transactionFee, int value) {
 		this.transactionFee = transactionFee;
 		this.value = value;
+		id += 1;
 	}
 	
 	public int getValue() {
@@ -20,6 +20,6 @@ public class Transaction {
 	}
 	
 	public int getId() {
-		return this.id;
+		return Transaction.id;
 	}
 }

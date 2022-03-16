@@ -37,7 +37,7 @@ public class SimulationConfiguration {
    */
   //TODO not documented in markdown
   // TODO return to PoW
-  public static final String ALGO = "simblock.node.consensus.ProofOfWork";
+  public static final String ALGO = "simblock.node.consensus.EtherProofOfWork";
 
   /**
    * The expected value of block generation interval. The difficulty of mining is automatically
@@ -45,7 +45,7 @@ public class SimulationConfiguration {
    */
   
   // TODO: how to represent the time needed for one transaction to be included into the block?
-  public static final int TXINTERVAL = 60;
+  public static final int TXINTERVAL = 60*10;
   public static final int NUMTX = 1000;
   public static final long INTERVAL = TXINTERVAL*NUMTX;//1000 * 60 * 10;//1000*60;//1000*30*5;//1000*60*10;
 

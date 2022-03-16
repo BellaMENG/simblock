@@ -90,6 +90,12 @@ public class Node {
    * The current block.
    */
   private Block block;
+  
+  // TODO: is final committee of Elastico or not
+  private boolean isFinalCommittee;
+  // if this node is in final committee, then the committee id starts from 1
+  
+  private int committeeID;
 
   /**
    * Orphaned blocks known to node.
@@ -159,6 +165,11 @@ public class Node {
     return this.nodeID;
   }
 
+  // TODO: get the committeeID
+  public void setCommitteeID(int committeeID) {
+	  this.committeeID = committeeID;
+  }
+  
   /**
    * Gets the region ID assigned to a node.
    *

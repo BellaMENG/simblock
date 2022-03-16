@@ -5,9 +5,9 @@ public class EtherTransaction extends Transaction {
 	private int startGas;
 	private int gasPrice;
 	
-	public EtherTransaction(int id, int value, int startGas, int gasPrice) {
+	public EtherTransaction(int value, int startGas, int gasPrice) {
 		
-		super(id, startGas * gasPrice, value);
+		super(startGas * gasPrice, value);
 		this.startGas = startGas;
 		this.gasPrice = gasPrice;
 		

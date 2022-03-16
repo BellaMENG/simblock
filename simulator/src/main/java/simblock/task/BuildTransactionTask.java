@@ -35,11 +35,9 @@ public class BuildTransactionTask implements Task{
 		// TODO: how to simulate the transactions in a block?
 		// How to simulate the transaction value and transaction fee?
 		this.transactions = new ArrayList<Transaction>();
-		int txId = 0;
 		for (int i = 0; i < this.numberOfTransactions; ++i) {
-			Transaction tx = new Transaction(txId, 1, 1);
+			Transaction tx = new Transaction(1, 1);
 			this.transactions.add(tx);
-			txId += 1;
 		}
 	}
 

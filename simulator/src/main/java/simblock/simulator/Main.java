@@ -128,6 +128,18 @@ public class Main {
     // Setup network
     constructNetworkWithAllNodes(NUM_OF_NODES);
 
+    for (int i = 0; i < END_BLOCK_HEIGHT*2; ++i) {
+    	// here, END_BLOCK_HEIGHT*2 is the number of batches
+    	int randomNum = random.nextInt(NUM_OF_NODES);
+	    // TODO: pick a random number to start propagate transactions
+    	// nested loop have number of transactions per batch
+    	for (int j = 0; j < 100; ++j) {
+    		// TODO: revise how transactions are broadcast in the network
+    		// instead of 11 fixed neighbors, use a random number to simulate better
+    	}
+    }
+    
+    
     // Initial block height, we stop at END_BLOCK_HEIGHT
     int currentBlockHeight = 1;
 
@@ -153,7 +165,7 @@ public class Main {
 
     // Print propagation information about all blocks
     // TODO: print propagation
-    //printAllPropagation();
+    printAllPropagation();
 
     //TODO logger
     System.out.println();
