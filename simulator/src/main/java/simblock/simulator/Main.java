@@ -229,6 +229,7 @@ public class Main {
         } else {
           pw.println("Orphan : " + b.getHeight() + " : " + b);
         }
+        pw.println("Number of transactions: " + b.getNumberOfTx());
       }
       pw.close();
 
