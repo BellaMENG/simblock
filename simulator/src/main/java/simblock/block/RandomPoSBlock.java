@@ -18,10 +18,9 @@ public class RandomPoSBlock extends Block {
 	private final BigInteger nextDifficulty;
 	private static BigInteger genesisNextDifficulty;
 	
-	private List<Transaction> transactions;
 
 	public RandomPoSBlock(RandomPoSBlock parent, Node minter, long time, int numberOfTx, List<Transaction> transactions, BigInteger difficulty) {
-		super(parent, minter, time, numberOfTx);
+		super(parent, minter, time, numberOfTx, transactions);
 		// TODO Auto-generated constructor stub
 		this.difficulty = difficulty;
 		if (parent == null) {
@@ -37,14 +36,6 @@ public class RandomPoSBlock extends Block {
 
 			this.nextDifficulty = parent.getNextDifficulty();
 		}
-		// TODO: how to randomly select a staker
-		this.transactions = new ArrayList<Transaction>();
-	    if (transactions == null) {
-	    	this.transactions = null;
-	    }
-	    else {
-	    	Collections.copy(this.transactions, transactions);
-	    }
 	}
 	
 	public BigInteger getDifficulty() {

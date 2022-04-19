@@ -52,11 +52,23 @@ public class MiningTask extends AbstractMintingTask {
 	// TODO: first, make all the transactions empty;
 	// TODO: implement transactions mempool and grab transactions from mempool;
 	List<Transaction> transactions = new ArrayList<Transaction>();
-	
+	int realNumTx = this.getMinter().getTxPool().size();
+	// TODO: how to identify whether a tx is already included in the blockchain??
+	// TODO: also, how to update each node's mempool?
+	// make a pool of already added transactions
+	if (realNumTx > numberOfTx) {
+		List<Transaction> txPool = this.getMinter().getTxPool();
+		for (int i = 0; i < numberOfTx; ++i) {
+			transactions.add(txPool.get(i));
+		}
+	}
+//	Transaction newTx = new Transaction(9, 19);
+//	transactions.add(newTx);
     ProofOfWorkBlock createdBlock = new ProofOfWorkBlock(
         (ProofOfWorkBlock) this.getParent(), this.getMinter(), getCurrentTime(), this.numberOfTx, transactions,
         this.difficulty
     );
+    //System.out.println(createdBlock.getTransactions().size());
     this.getMinter().receiveBlock(createdBlock);
   }
 }

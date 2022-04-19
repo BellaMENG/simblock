@@ -6,7 +6,7 @@ import java.util.List;
 import java.math.BigInteger;
 
 import simblock.node.Node;
-import simblock.transaction.EtherTransaction;
+import simblock.transaction.Transaction;
 
 import static simblock.simulator.Simulator.getSimulatedNodes;
 import static simblock.simulator.Simulator.getTargetInterval;
@@ -21,22 +21,13 @@ public class EtherBlock extends Block {
 	private final BigInteger nextDifficulty;
 	private static BigInteger genesisNextDifficulty;
 	
-	private List<EtherTransaction> transactions;
 	
-	public EtherBlock(EtherBlock parent, Node minter, long time, int numberOfTx, List<EtherTransaction> transactions, BigInteger difficulty, int gasLimit, int gasUsed) {
-		super(parent, minter, time, numberOfTx);
+	public EtherBlock(EtherBlock parent, Node minter, long time, int numberOfTx, List<Transaction> transactions, BigInteger difficulty, int gasLimit, int gasUsed) {
+		super(parent, minter, time, numberOfTx, transactions);
 		// TODO Auto-generated constructor stub
 		this.gasLimit = gasLimit;
 		this.gasUsed = gasUsed;
 		this.difficulty = difficulty;
-		
-		this.transactions = new ArrayList<EtherTransaction>();
-	    if (transactions == null) {
-	    	this.transactions = null;
-	    }
-	    else {
-	    	Collections.copy(this.transactions, transactions);
-	    }
 	    
 	    if (parent == null) {
 	    	this.totalDifficulty = BigInteger.ZERO.add(difficulty);

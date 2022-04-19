@@ -22,10 +22,14 @@ import static simblock.settings.SimulationConfiguration.CBR_FAILURE_BLOCK_SIZE_D
 import static simblock.settings.SimulationConfiguration.CBR_FAILURE_RATE_FOR_CHURN_NODE;
 import static simblock.settings.SimulationConfiguration.CBR_FAILURE_RATE_FOR_CONTROL_NODE;
 import static simblock.settings.SimulationConfiguration.COMPACT_BLOCK_SIZE;
+import static simblock.settings.SimulationConfiguration.NUM_TX;
+import static simblock.settings.SimulationConfiguration.TX_SIZE;
 import static simblock.simulator.Main.OUT_JSON_FILE;
 import static simblock.simulator.Network.getBandwidth;
 import static simblock.simulator.Simulator.arriveBlock;
+import static simblock.simulator.Simulator.arriveTx;
 import static simblock.simulator.Timer.getCurrentTime;
+import static simblock.simulator.Timer.getTaskQueueSize;
 import static simblock.simulator.Timer.putTask;
 import static simblock.simulator.Timer.removeTask;
 
@@ -46,7 +50,8 @@ import simblock.task.GetBlockTxnMessageTask;
 import simblock.task.InvMessageTask;
 import simblock.task.InvTxMessageTask;
 import simblock.task.RecMessageTask;
-import simblock.task.BuildTransactionTask;
+import simblock.task.RecTxMessageTask;
+import simblock.task.TxMessageTask;
 
 /**
  * A class representing a node in the network.
@@ -114,12 +119,32 @@ public class Node {
 	 */
 	// TODO verify
 	private boolean sendingBlock = false;
+	
+	/**
+	 * In the process of sending tx.
+	 */
+	private boolean sendingTx = false;
 
 	// TODO
 	private final ArrayList<AbstractMessageTask> messageQue = new ArrayList<>();
-	// TODO
+	// TODO 
 	private final Set<Block> downloadingBlocks = new HashSet<>();
-
+	
+	/**
+	 * queues of nodes that wants to receive transactions.
+	 */
+	private final ArrayList<AbstractMessageTask> txMessageQue = new ArrayList<>();
+	
+	/**
+	 * The transaction that is right now being downloaded.
+	 */
+	private final Set<Transaction> downloadingTxs = new HashSet<>();
+	
+	/**
+	 * process of receiving transactions
+	 */
+	private final Set<Transaction> receivedTxs = new HashSet<>();
+	
 	/**
 	 * Processing time of tasks expressed in milliseconds.
 	 */
@@ -278,6 +303,14 @@ public class Node {
 		return this.routingTable.removeNeighbor(node);
 	}
 
+	public ArrayList<Transaction> getTxPool() {
+		return this.txPool;
+	}
+
+	public void clearTxPool() {
+		this.txPool.clear();
+	}
+
 	/**
 	 * Initializes the routing table.
 	 */
@@ -290,6 +323,7 @@ public class Node {
 	 */
 	public void genesisBlock() {
 		Block genesis = this.consensusAlgo.genesisBlock();
+		//System.out.println("task queue size in genesisBlock(): " + getTaskQueueSize());
 		this.receiveBlock(genesis);
 	}
 
@@ -310,6 +344,12 @@ public class Node {
 		printAddBlock(newBlock);
 		// Observe and handle new block arrival
 		arriveBlock(newBlock, this);
+	}
+	
+	
+	public void addToTxPool(Transaction tx) {
+		this.receivedTxs.add(tx);
+		arriveTx(tx, this);
 	}
 
 	/**
@@ -375,13 +415,25 @@ public class Node {
 			putTask(task);
 		}
 	}
-
+	
+	/**
+	 * send invitation message to neighbors
+	 * 
+	 * @param tx: the transaction to be broadcast
+	 */
+	public void sendInvTx(Transaction tx) {
+		for (Node to : this.routingTable.getNeighbors()) {
+			AbstractMessageTask task = new InvTxMessageTask(this, to, tx);
+			putTask(task);
+		}
+	}
 	/**
 	 * Receive block.
 	 *
 	 * @param block the block
 	 */
 	public void receiveBlock(Block block) {
+//		System.out.println("receiveBlock");
 		if (this.consensusAlgo.isReceivedBlockValid(block, this.block)) {
 			if (this.block != null && !this.block.isOnSameChainAs(block)) {
 				// If orphan mark orphan
@@ -389,6 +441,7 @@ public class Node {
 			}
 			// Else add to canonical chain
 			this.addToChain(block);
+			
 			// Generates a new minting task
 			this.minting();
 			// Advertise received block
@@ -402,18 +455,13 @@ public class Node {
 			arriveBlock(block, this);
 		}
 	}
-	
-	// send the transaction to its neighbors
-	public void sendInvTx(Transaction tx) {
-		for (Node to : this.routingTable.getNeighbors()) {
-			AbstractMessageTask task = new InvTxMessageTask(this, to, tx);
-			putTask(task);
-		}
-	}
+
+
 
 	// TODO: following the routing table, transactions reach different nodes.
 	public void receiveTransaction(Transaction tx) {
 		// add the current transaction to the pool
+		System.out.println("receiveTransaction");
 		this.txPool.add(tx);
 		this.sendInvTx(tx);
 	}
@@ -441,11 +489,28 @@ public class Node {
 				}
 			}
 		}
+		// Add more message types
+		if (message instanceof InvTxMessageTask) {
+			Transaction tx = ((InvTxMessageTask) message).getTx();
+			// first make sure that this transaction is a new transaction
+			if (!this.downloadingTxs.contains(tx)) {
+				AbstractMessageTask task = new RecTxMessageTask(this, from, tx);
+				putTask(task);
+				this.downloadingTxs.add(tx);
+			}
+		}
 
 		if (message instanceof RecMessageTask) {
 			this.messageQue.add((RecMessageTask) message);
 			if (!sendingBlock) {
 				this.sendNextBlockMessage();
+			}
+		}
+		
+		if (message instanceof RecTxMessageTask) {
+			this.txMessageQue.add((RecTxMessageTask) message);
+			if (!sendingTx) {
+				this.sendNextTxMessage();
 			}
 		}
 
@@ -464,6 +529,7 @@ public class Node {
 			boolean success = random.nextDouble() > CBRfailureRate ? true : false;
 			if (success) {
 				downloadingBlocks.remove(block);
+				System.out.println();
 				this.receiveBlock(block);
 			} else {
 				AbstractMessageTask task = new GetBlockTxnMessageTask(this, from, block);
@@ -477,9 +543,9 @@ public class Node {
 			this.receiveBlock(block);
 		}
 		
-		// Add more message types
-		if (message instanceof InvTxMessageTask) {
-			Transaction tx = ((InvTxMessageTask) message).getTx();
+		if (message instanceof TxMessageTask) {
+			Transaction tx = ((TxMessageTask) message).getTx();
+			downloadingTxs.remove(tx);
 			this.receiveTransaction(tx);
 		}
 	}
@@ -539,6 +605,27 @@ public class Node {
 			putTask(messageTask);
 		} else {
 			sendingBlock = false;
+		}
+	}
+	
+	public void sendNextTxMessage() {
+		if (this.txMessageQue.size() > 0) {
+			Node to = this.messageQue.get(0).getFrom();
+			long bandwidth = getBandwidth(this.getRegion(), to.getRegion());
+
+			AbstractMessageTask messageTask;
+			if (this.txMessageQue.get(0) instanceof RecTxMessageTask) {
+				Transaction tx = ((RecTxMessageTask) this.txMessageQue.get(0)).getTx();
+				long delay = TX_SIZE * 8 / (bandwidth / 1000) + processingTime;
+				messageTask = new TxMessageTask(this, to, tx, delay);
+			} else {
+				throw new UnsupportedOperationException();
+			}
+			sendingTx = true;
+			this.txMessageQue.remove(0);
+			putTask(messageTask);
+		} else {
+			sendingTx = false;
 		}
 	}
 }

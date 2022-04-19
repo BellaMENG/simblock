@@ -101,6 +101,11 @@ public class Timer {
       return order;
     }
   }
+  
+  public static int getTaskQueueSize() {
+	  
+	  return taskQueue.size();
+  }
 
   /**
    * Runs a {@link ScheduledTask}.
@@ -145,6 +150,14 @@ public class Timer {
       return null;
     }
   }
+  
+  public static long getTaskTime(Task task) {
+	  return taskMap.get(task).getScheduledTime();
+  }
+  
+  public static void printAllTasks() {
+	  
+  }
 
   /**
    * Schedule task to be executed at the current time incremented by the task duration.
@@ -154,6 +167,7 @@ public class Timer {
   public static void putTask(Task task) {
     ScheduledTask scheduledTask = new ScheduledTask(task, currentTime + task.getInterval());
     taskMap.put(task, scheduledTask);
+    //System.out.println(task.getClass().getName() + " task scheduled at time " + (currentTime + task.getInterval()));
     taskQueue.add(scheduledTask);
   }
 

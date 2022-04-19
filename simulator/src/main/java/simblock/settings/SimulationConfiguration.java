@@ -23,10 +23,11 @@ public class SimulationConfiguration {
   /**
    * The number of nodes participating in the blockchain network.
    */
-  //TODO revert
-  public static final int NUM_OF_NODES = 300;//600;//800;//6000;
+    public static final int NUM_OF_NODES = 5;//600;//800;//6000;
   // public static final int NUM_OF_NODES = 600;//600;//800;//6000;
-
+    
+    
+    
   /**
    * The kind of routing table.
    */
@@ -35,9 +36,8 @@ public class SimulationConfiguration {
   /**
    * The consensus algorithm to be used.
    */
-  //TODO not documented in markdown
   // TODO return to PoW
-  public static final String ALGO = "simblock.node.consensus.EtherProofOfWork";
+  public static final String ALGO = "simblock.node.consensus.ProofOfWork";
 
   /**
    * The expected value of block generation interval. The difficulty of mining is automatically
@@ -49,6 +49,11 @@ public class SimulationConfiguration {
   public static final int NUMTX = 1000;
   public static final long INTERVAL = TXINTERVAL*NUMTX;//1000 * 60 * 10;//1000*60;//1000*30*5;//1000*60*10;
 
+  /**
+   * Observed blocks size limit.
+   */
+  public static final long OBSERVEDBLOCKSLIMIT = 10;
+  
   /**
    * The average mining power of each node. Mining power corresponds to Hash Rate in Bitcoin, and
    * is the number of mining (hash calculation) executed per millisecond.
@@ -84,15 +89,28 @@ public class SimulationConfiguration {
   //public static final int END_BLOCK_HEIGHT = 100;
   public static final int END_BLOCK_HEIGHT = 3;
 
+  
+  /**
+   * Transaction size. (unit: byte).
+   */
+  public static final long TX_SIZE = 250;
+  
+  /**
+   * Number of transactions. 
+   * TODO: make it random
+   */
+  public static final int NUM_TX = 2140;
+  
   /**
    * Block size. (unit: byte).
    */
-  public static final long BLOCK_SIZE = 535000;//6110;//8000;//535000;//0.5MB
+  public static final long BLOCK_SIZE = NUM_TX*TX_SIZE;//6110;//8000;//535000;//0.5MB
+  
 
   /**
    * The usage rate of compact block relay (CBR) protocol.
    */
-  public static final float CBR_USAGE_RATE = 0.964f;
+  public static final float CBR_USAGE_RATE = 0; //0.964f;
   /**
    * The rate of nodes that cause churn.
    */

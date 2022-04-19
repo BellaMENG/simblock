@@ -31,6 +31,12 @@ public class NetworkConfiguration {
       Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN",
                     "AUSTRALIA"
       ));
+  
+  // between ohio and ireland
+  
+  public static final List<String> REGION_LIST2 = new ArrayList<>(
+		  Arrays.asList("Ohio", "Ireland")
+	);
 
   /**
    * LATENCY[i][j] is average latency from REGION_LIST[i] to REGION_LIST[j]
@@ -56,11 +62,16 @@ public class NetworkConfiguration {
       {151, 252, 301, 58, 12, 126},
       {189, 294, 322, 198, 126, 16}
   };
+  
+  private static final long[][] LATENCY_2 = {
+		  {0, 105},
+		  {74, 0}
+  };
 
   /**
    * List of latency assigned to each region. (unit: millisecond)
    */
-  public static final long[][] LATENCY = LATENCY_2019;
+  public static final long[][] LATENCY = LATENCY_2015;
 
   /**
    * List of download bandwidth assigned to each region, and last element is Inter-regional
@@ -83,7 +94,7 @@ public class NetworkConfiguration {
    * List of download bandwidth assigned to each region, and last element is Inter-regional
    * bandwidth. (unit: bit per second)
    */
-  public static final long[] DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2019;
+  public static final long[] DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2015;
 
   /**
    * List of upload bandwidth assigned to each region. (unit: bit per second), and last element
@@ -106,7 +117,7 @@ public class NetworkConfiguration {
    * List of upload bandwidth assigned to each region. (unit: bit per second), and last element
    * is Inter-regional bandwidth.
    */
-  public static final long[] UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2019;
+  public static final long[] UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2015;
 
   /**
    * Region distribution Bitcoin 2015.
@@ -144,7 +155,7 @@ public class NetworkConfiguration {
    * The distribution of node's region. Each value means the rate of the number of nodes in the
    * corresponding region to the number of all nodes.
    */
-  public static final double[] REGION_DISTRIBUTION = REGION_DISTRIBUTION_BITCOIN_2019;
+  public static final double[] REGION_DISTRIBUTION = REGION_DISTRIBUTION_BITCOIN_2015;
 
   /**
    * The cumulative distribution of number of outbound links for Bitcoin 2015.

@@ -18,6 +18,11 @@ package simblock.simulator;
 
 import static simblock.simulator.Timer.getCurrentTime;
 
+import static simblock.settings.SimulationConfiguration.OBSERVEDBLOCKSLIMIT;
+
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,13 +42,46 @@ public class Simulator {
 	 * A list of nodes that will be used in a simulation.
 	 */
 	private static final ArrayList<Node> simulatedNodes = new ArrayList<>();
-	
-	private static ArrayList<Transaction> mempool = new ArrayList<>();
+
+	//private static ArrayList<Transaction> mempool = new ArrayList<>();
 
 	/**
 	 * The target block interval in milliseconds.
 	 */
 	private static long targetInterval;
+
+	public static URI CONF_FILE_URI;
+	public static URI OUT_FILE_URI;
+	static {
+		try {
+			CONF_FILE_URI = ClassLoader.getSystemResource("simulator.conf").toURI();
+			OUT_FILE_URI = CONF_FILE_URI.resolve(new URI("../output/"));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// TODO:
+	// this printwriter out.txt stores the propagation time
+	public static PrintWriter OUT_TXT_FILE;
+	static {
+		try {
+			OUT_TXT_FILE = new PrintWriter(
+					new BufferedWriter(new FileWriter(new File(OUT_FILE_URI.resolve("./out.txt")))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static PrintWriter OUT_TXN_TXT_FILE;
+	static {
+		try {
+			OUT_TXN_TXT_FILE = new PrintWriter(
+					new BufferedWriter(new FileWriter(new File(OUT_FILE_URI.resolve("./out_tx.txt")))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Get simulated nodes list.
@@ -54,10 +92,7 @@ public class Simulator {
 		return simulatedNodes;
 	}
 
-	public static ArrayList<Transaction> getMempoolTxs() {
-		return mempool;
-	}
-	
+
 	/**
 	 * Get target block interval.
 	 *
@@ -114,6 +149,12 @@ public class Simulator {
 	 * A list of observed {@link Block} instances.
 	 */
 	private static final ArrayList<Block> observedBlocks = new ArrayList<>();
+	
+	/**
+	 * A list of observed {@link Transaction} instances.
+	 */
+	private static final ArrayList<Transaction> observedTxs = new ArrayList<>();
+	
 
 	/**
 	 * A list of observed block propagation times. The map key represents the id of
@@ -122,6 +163,11 @@ public class Simulator {
 	 * absolute time it took for a node to witness the block.
 	 */
 	private static final ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<>();
+	
+	/**
+	 * Similar to the block propagation map, a list of tx propagation pairs.
+	 */
+	private static final ArrayList<LinkedHashMap<Integer, Long>> observedTxPropagations = new ArrayList<>();
 
 	/**
 	 * Handle the arrival of a new block. For every observed block, propagation
@@ -140,8 +186,7 @@ public class Simulator {
 			propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
 		} else {
 			// If the block has not been seen by any node and there is no memory allocated
-			// TODO move magic number to constant
-			if (observedBlocks.size() > 10) {
+			if (observedBlocks.size() > OBSERVEDBLOCKSLIMIT) {
 				// After the observed blocks limit is reached, log and remove old blocks by FIFO
 				// principle
 				printPropagation(observedBlocks.get(0), observedPropagations.get(0));
@@ -155,6 +200,23 @@ public class Simulator {
 			observedBlocks.add(block);
 			// Record the propagation time
 			observedPropagations.add(propagation);
+		}
+	}
+	
+	public static void arriveTx(Transaction tx, Node node) {
+		if (observedTxs.contains(tx)) {
+			LinkedHashMap<Integer, Long> propagation = observedTxPropagations.get(observedTxs.indexOf(tx));
+			propagation.put(node.getNodeID(), getCurrentTime() - tx.getTime());
+		} else {
+			if (observedTxs.size() > 1000) {
+				printTxPropagation(observedTxs.get(0), observedTxPropagations.get(0));
+				observedTxs.remove(0);
+				observedTxPropagations.remove(0);
+			}
+			LinkedHashMap<Integer, Long> propagation = new LinkedHashMap<>();
+			propagation.put(node.getNodeID(), getCurrentTime() - tx.getTime());
+			observedTxs.add(tx);
+			observedTxPropagations.add(propagation);
 		}
 	}
 
@@ -177,13 +239,34 @@ public class Simulator {
 		// Print block and its height
 		// TODO block does not have a toString method, what is printed here
 		System.out.println(block.getClass().getSimpleName() + ": " + block.getHeight());
-		System.out.println(block.getTime());
+		//System.out.println(block.getTime());
+		System.out.println("Minter is " + block.getMinter().getNodeID());
+		long average = 0;
+		int count = 0;
 		for (Map.Entry<Integer, Long> timeEntry : propagation.entrySet()) {
-			//System.out.println(timeEntry.getKey() + "," + timeEntry.getValue());
+			// System.out.println(timeEntry.getKey() + "," + timeEntry.getValue());
+			count += 1;
+			average += timeEntry.getValue();
 		}
+		float avg = average/count;
+		System.out.println(avg);
+		OUT_TXT_FILE.println(avg);
 		System.out.println();
 	}
 
+	
+	public static void printTxPropagation(Transaction tx, LinkedHashMap<Integer, Long> propagation) {
+		System.out.println(tx.getClass().getSimpleName() + ": " + tx.getId());
+		long average = 0;
+		int count = 0;
+		for (Map.Entry<Integer, Long> timeEntry: propagation.entrySet()) {
+			//System.out.println(timeEntry.getKey() + ", " + timeEntry.getValue());
+			count += 1;
+			average += timeEntry.getValue();
+		}
+		float avg = average/count;
+		OUT_TXN_TXT_FILE.println(avg);
+	}
 	/**
 	 * Print propagation information about all blocks, internally relying on
 	 * {@link Simulator#printPropagation(Block, LinkedHashMap)}.

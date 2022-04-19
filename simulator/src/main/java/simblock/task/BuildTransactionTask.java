@@ -1,6 +1,7 @@
 package simblock.task;
 
 import simblock.transaction.Transaction;
+import static simblock.simulator.Timer.getCurrentTime;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class BuildTransactionTask implements Task{
 		// How to simulate the transaction value and transaction fee?
 		this.transactions = new ArrayList<Transaction>();
 		for (int i = 0; i < this.numberOfTransactions; ++i) {
-			Transaction tx = new Transaction(1, 1);
+			Transaction tx = new Transaction(1, 1, getCurrentTime());
 			this.transactions.add(tx);
 		}
 	}

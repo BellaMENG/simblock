@@ -43,7 +43,7 @@ public class SamplePoSBlock extends Block {
 	private final BigInteger totalDifficulty;
 	private final BigInteger nextDifficulty;
 	
-	private List<Transaction> transactions;
+//	private List<Transaction> transactions;
 
 	/**
 	 * Instantiates a new Sample proof of stake block.
@@ -54,7 +54,7 @@ public class SamplePoSBlock extends Block {
 	 * @param difficulty the difficulty
 	 */
 	public SamplePoSBlock(SamplePoSBlock parent, Node minter, long time, int numberOfTx, List<Transaction> transactions, BigInteger difficulty) {
-		super(parent, minter, time, numberOfTx);
+		super(parent, minter, time, numberOfTx, transactions);
 
 		this.coinages = new HashMap<>();
 		if (parent == null) {
@@ -84,13 +84,6 @@ public class SamplePoSBlock extends Block {
 		this.nextDifficulty = totalCoinage.multiply(BigInteger.valueOf(getTargetInterval()))
 				.divide(BigInteger.valueOf(1000));
 		
-		this.transactions = new ArrayList<Transaction>();
-	    if (transactions == null) {
-	    	this.transactions = null;
-	    }
-	    else {
-	    	Collections.copy(this.transactions, transactions);
-	    }
 	}
 
 	/**

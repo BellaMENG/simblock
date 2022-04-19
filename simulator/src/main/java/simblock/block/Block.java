@@ -17,6 +17,10 @@
 package simblock.block;
 
 import simblock.node.Node;
+import simblock.transaction.Transaction;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * The representation of a block.
@@ -54,7 +58,7 @@ public class Block {
 
 	private final int numberOfTx;
 
-	// private List<Transaction> transactions;
+	private List<Transaction> transactions = new ArrayList<Transaction>();
 	/**
 	 * Instantiates a new Block.
 	 *
@@ -62,15 +66,26 @@ public class Block {
 	 * @param minter the minter
 	 * @param time   the time
 	 */
-	public Block(Block parent, Node minter, long time, int numberOfTx) {
+	public Block(Block parent, Node minter, long time, int numberOfTx, List<Transaction> transactions) {
 		this.height = parent == null ? 0 : parent.getHeight() + 1;
 		this.parent = parent;
 		this.minter = minter;
 		this.time = time;
 
+		this.transactions = new ArrayList<Transaction>();
 		this.id = latestId;
 		this.numberOfTx = numberOfTx;
 		latestId++;
+		
+		if (transactions == null) {
+	    	this.transactions = null;
+//	    	System.out.println("null");
+	    }
+	    else {
+//	    	Collections.copy(this.transactions, transactions);
+	    	this.transactions.addAll(transactions);
+//	    	System.out.println(this.transactions.size());
+	    }
 	}
 
 	/**
@@ -124,6 +139,14 @@ public class Block {
 	public int getNumberOfTx() {
 		return this.numberOfTx;
 	}
+	
+	public int getRealNumOfTx() {
+		return this.transactions.size();
+	}
+	
+	public List<Transaction> getTransactions() {
+		return this.transactions;
+	}
 
 	/**
 	 * Generates the genesis block. The parent is set to null and the time is set to
@@ -134,7 +157,7 @@ public class Block {
 	 */
 	@SuppressWarnings("unused")
 	public static Block genesisBlock(Node minter) {
-		return new Block(null, minter, 0, 0);
+		return new Block(null, minter, 0, 0, null);
 	}
 
 	/**

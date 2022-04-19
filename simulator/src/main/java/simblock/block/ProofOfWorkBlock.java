@@ -46,16 +46,8 @@ public class ProofOfWorkBlock extends Block {
    * @param difficulty the difficulty
    */
   public ProofOfWorkBlock(ProofOfWorkBlock parent, Node minter, long time, int numberOfTx, List<Transaction> transactions, BigInteger difficulty) {
-    super(parent, minter, time, numberOfTx);
+    super(parent, minter, time, numberOfTx, transactions);
     this.difficulty = difficulty;
-    
-    this.transactions = new ArrayList<Transaction>();
-    if (transactions == null) {
-    	this.transactions = null;
-    }
-    else {
-    	Collections.copy(this.transactions, transactions);
-    }
     
     if (parent == null) {
       this.totalDifficulty = BigInteger.ZERO.add(difficulty);

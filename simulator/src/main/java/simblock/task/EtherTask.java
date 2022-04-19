@@ -2,7 +2,7 @@ package simblock.task;
 
 import simblock.node.Node;
 import simblock.block.EtherBlock;
-import simblock.transaction.EtherTransaction;
+import simblock.transaction.Transaction;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class EtherTask extends AbstractMintingTask{
 
 	@Override
 	public void run() {
-		List<EtherTransaction> transactions = new ArrayList<EtherTransaction>();
+		List<Transaction> transactions = new ArrayList<Transaction>();
 		// TODO create transactions
 		
 		EtherBlock createdBlock = new EtherBlock((EtherBlock) this.getParent(), this.getMinter(), getCurrentTime(), this.numberOfTx, transactions,
